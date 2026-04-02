@@ -1,0 +1,15 @@
+*.iml
+.gradle
+/local.properties
+/.idea
+.DS_Store
+/build
+/app/build
+/app/release
+*.apk
+*.aab
+*.jks
+*.keystore
+/app/libs/*.aar
+/app/src/main/assets/geoip.dat
+/app/src/main/assets/geosite.dat

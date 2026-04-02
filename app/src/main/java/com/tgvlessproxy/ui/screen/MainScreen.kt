@@ -1,10 +1,12 @@
 package com.tgvlessproxy.ui.screen
 
-import android.widget.Toast
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -20,9 +22,9 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.res.painterResource
+import com.tgvlessproxy.R
 import androidx.compose.ui.unit.dp
 import com.tgvlessproxy.data.model.ProxyState
 import com.tgvlessproxy.data.model.UiState
@@ -35,7 +37,6 @@ fun MainScreen(
     onLogout: () -> Unit,
 ) {
     val context = LocalContext.current
-    val clipboardManager = LocalClipboardManager.current
 
     Column(
         modifier = Modifier
@@ -97,12 +98,17 @@ fun MainScreen(
 
         Button(
             onClick = {
-                clipboardManager.setText(AnnotatedString(telegramLink))
-                Toast.makeText(context, "Copied to clipboard", Toast.LENGTH_SHORT).show()
+                context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(telegramLink)))
             },
             modifier = Modifier.fillMaxWidth(),
         ) {
-            Text("Copy Telegram Proxy Link")
+            Icon(
+                painter = painterResource(R.drawable.ic_telegram),
+                contentDescription = null,
+                modifier = Modifier.size(20.dp),
+            )
+            Spacer(Modifier.width(8.dp))
+            Text("Install")
         }
 
         Spacer(Modifier.height(12.dp))

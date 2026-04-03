@@ -2,6 +2,14 @@
 
 An Android app that runs a local SOCKS5 proxy for Telegram using VLESS servers.
 
+## Installation
+
+Download the latest APK from [GitHub Releases](https://github.com/fxlrnrpt/tg-vless-proxy/releases/latest).
+
+- **arm64-v8a** — most modern phones (2017+)
+- **armeabi-v7a** — older 32-bit ARM devices
+- **x86_64** — emulators and Chromebooks
+
 ## What is this?
 
 TgVlessProxy lets you route your Telegram traffic through a VLESS proxy server. You provide a subscription link (given to you by your proxy provider), and the app handles the rest.

@@ -24,11 +24,17 @@ class SubscriptionRepository(private val prefs: PreferencesManager) {
                     .header("User-Agent", "TgVlessProxy/1.0")
                     .build()
                 val response = client.newCall(request).execute()
-                val body = response.body?.string() ?: throw IOException("Empty response")
-                if (!response.isSuccessful) throw IOException("HTTP ${response.code}")
+                if (!response.isSuccessful) throw IOException("Server returned HTTP ${response.code}")
+                val body = response.body?.string()
+                if (body.isNullOrBlank()) throw IOException("Server returned empty response")
+
+                val servers = VlessParser.parseSubscription(body)
+                if (servers.isEmpty()) {
+                    throw IOException("No VLESS servers found in subscription")
+                }
 
                 prefs.saveSubscription(subscriptionUrl, body)
-                VlessParser.parseSubscription(body)
+                servers
             }
         }
 

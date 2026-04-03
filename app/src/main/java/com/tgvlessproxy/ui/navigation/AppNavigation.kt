@@ -1,6 +1,7 @@
 package com.tgvlessproxy.ui.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -10,6 +11,7 @@ import androidx.navigation.compose.rememberNavController
 import com.tgvlessproxy.ui.screen.LoginScreen
 import com.tgvlessproxy.ui.screen.MainScreen
 import com.tgvlessproxy.ui.screen.ServerListScreen
+import com.tgvlessproxy.data.model.ProxyState
 import com.tgvlessproxy.viewmodel.MainViewModel
 
 @Composable
@@ -19,17 +21,21 @@ fun AppNavigation(viewModel: MainViewModel = viewModel()) {
 
     val startDest = if (uiState.subscriptionUrl != null) "main" else "login"
 
+    // Navigate to main when login succeeds (proxy becomes connected)
+    LaunchedEffect(uiState.proxyState) {
+        if (uiState.proxyState == ProxyState.CONNECTED) {
+            navController.navigate("main") {
+                popUpTo("login") { inclusive = true }
+            }
+        }
+    }
+
     NavHost(navController = navController, startDestination = startDest) {
         composable("login") {
             LoginScreen(
                 proxyState = uiState.proxyState,
                 errorMessage = uiState.errorMessage,
-                onLogin = { url ->
-                    viewModel.login(url)
-                    navController.navigate("main") {
-                        popUpTo("login") { inclusive = true }
-                    }
-                },
+                onLogin = { url -> viewModel.login(url) },
             )
         }
         composable("main") {

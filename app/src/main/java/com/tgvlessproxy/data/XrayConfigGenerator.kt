@@ -6,7 +6,7 @@ import org.json.JSONObject
 
 object XrayConfigGenerator {
 
-    const val SOCKS_PORT = 10808
+    const val SOCKS_PORT = 51080
 
     fun generate(server: VlessServer, useDirectOutbound: Boolean): String {
         return JSONObject().apply {

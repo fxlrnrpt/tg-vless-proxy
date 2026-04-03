@@ -25,6 +25,17 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import com.tgvlessproxy.data.model.ProxyState
 
+private fun isValidUrl(url: String): Boolean {
+    val trimmed = url.trim()
+    if (!trimmed.startsWith("http://") && !trimmed.startsWith("https://")) return false
+    return try {
+        java.net.URL(trimmed)
+        true
+    } catch (_: Exception) {
+        false
+    }
+}
+
 @Composable
 fun LoginScreen(
     proxyState: ProxyState,
@@ -33,6 +44,7 @@ fun LoginScreen(
 ) {
     var url by rememberSaveable { mutableStateOf("") }
     val isLoading = proxyState == ProxyState.CONNECTING
+    val isValidUrl = url.isBlank() || isValidUrl(url)
 
     Column(
         modifier = Modifier
@@ -51,14 +63,18 @@ fun LoginScreen(
         OutlinedTextField(
             value = url,
             onValueChange = { url = it },
-            label = { Text("Subscription URL") },
+            label = { Text("VPN (VLESS) Subscription URL") },
             modifier = Modifier.fillMaxWidth(),
             singleLine = true,
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
             keyboardActions = KeyboardActions(onDone = {
-                if (url.isNotBlank() && !isLoading) onLogin(url)
+                if (isValidUrl(url) && !isLoading) onLogin(url.trim())
             }),
             enabled = !isLoading,
+            isError = !isValidUrl,
+            supportingText = if (!isValidUrl) {
+                { Text("Enter a valid HTTP(S) URL") }
+            } else null,
         )
 
         if (errorMessage != null) {
@@ -73,8 +89,8 @@ fun LoginScreen(
         Spacer(Modifier.height(16.dp))
 
         Button(
-            onClick = { onLogin(url) },
-            enabled = url.isNotBlank() && !isLoading,
+            onClick = { onLogin(url.trim()) },
+            enabled = isValidUrl(url) && !isLoading,
             modifier = Modifier.fillMaxWidth(),
         ) {
             if (isLoading) {

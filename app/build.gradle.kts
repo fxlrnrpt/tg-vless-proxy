@@ -57,6 +57,14 @@ android {
     buildFeatures {
         compose = true
     }
+
+    applicationVariants.all {
+        outputs.all {
+            val output = this as com.android.build.gradle.internal.api.BaseVariantOutputImpl
+            val abi = output.getFilter("ABI") ?: "universal"
+            output.outputFileName = "tg-vless-proxy-${versionName}-${abi}-${buildType.name}.apk"
+        }
+    }
 }
 
 dependencies {

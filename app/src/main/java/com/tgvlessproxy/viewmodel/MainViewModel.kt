@@ -157,9 +157,11 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     fun getTelegramLink(): String = "tg://socks?server=127.0.0.1&port=${XrayConfigGenerator.SOCKS_PORT}"
 
     private fun startProxy() {
+        val isVpn = vpnMonitor.isVpnActive.value
+        _uiState.update { it.copy(isVpnActive = isVpn) }
         val state = _uiState.value
         val server = state.servers.getOrNull(state.selectedServerIndex) ?: return
-        val config = XrayConfigGenerator.generate(server, useDirectOutbound = state.isVpnActive)
+        val config = XrayConfigGenerator.generate(server, useDirectOutbound = isVpn)
 
         val intent = Intent(getApplication(), ProxyForegroundService::class.java).apply {
             action = ProxyForegroundService.ACTION_START
@@ -178,9 +180,11 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     private fun restartProxyWithCurrentConfig() {
+        val isVpn = vpnMonitor.isVpnActive.value
+        _uiState.update { it.copy(isVpnActive = isVpn) }
         val state = _uiState.value
         val server = state.servers.getOrNull(state.selectedServerIndex) ?: return
-        val config = XrayConfigGenerator.generate(server, useDirectOutbound = state.isVpnActive)
+        val config = XrayConfigGenerator.generate(server, useDirectOutbound = isVpn)
 
         val intent = Intent(getApplication(), ProxyForegroundService::class.java).apply {
             action = ProxyForegroundService.ACTION_RESTART
